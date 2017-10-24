@@ -1,0 +1,38 @@
+<html>
+
+<head>
+  <title>duotoner</title>
+  <style>
+    html,
+    body {
+      height: 100%;
+    }
+
+    #source,
+    #duotone {
+      float: left;
+      display: inline-block;
+      width: 450px;
+      height: 283px;
+    }
+
+    #duotone {
+      width: 400px;
+      height: 400px;
+    }
+
+    #source {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <input id="file" type="file">
+  <img id="source" src="test.jpg" alt="Test">
+  <canvas id="duotone"></canvas>
+
+  <script src="/script.js"></script>
+</body>
+
+</html>

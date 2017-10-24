@@ -1,0 +1,16 @@
+{
+  "name": "duotone",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev":
+      "browser-sync start --server --files \"css/*.css\" \"*.js\" \"*.html\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "browser-sync": "^2.18.13"
+  }
+}
