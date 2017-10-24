@@ -3,34 +3,110 @@
 <head>
   <title>duotoner</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     html,
     body {
       height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     }
 
-    #source,
-    #duotone {
-      float: left;
+    ol {
+      padding: 0;
+      list-style-position: inside;
+    }
+
+    label {
       display: inline-block;
-      width: 450px;
-      height: 283px;
+      margin-right: 1rem;
     }
 
-    #duotone {
-      width: 400px;
-      height: 400px;
+    .color-picker {
+      display: inline-block;
+      margin-left: 1rem;
+    }
+
+    .hidden {
+      display: none;
     }
 
     #source {
       display: none;
     }
+
+    .dropbox {
+      outline: 2px dashed grey;
+      outline-offset: -10px;
+      background: rgba(0, 0, 0, 0.05);
+      color: dimgray;
+      padding: 10px 10px;
+      min-height: 100px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .input-file {
+      opacity: 0;
+      width: 100%;
+      height: 100px;
+      position: absolute;
+      cursor: pointer;
+    }
+
+    .dropbox:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .dropbox p {
+      font-size: 1.2em;
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    #duotone-container {
+      transform-origin: top left;
+    }
   </style>
 </head>
 
 <body>
-  <input id="file" type="file">
+  <h1>The Duotoner</h1>
+  <ol>
+    <li>Choose an image</li>
+    <li>Select a preset</li>
+    <li>Right click the image and choose "Save as..."</li>
+  </ol>
+
+  <div class="dropbox">
+    <input id="file" type="file" accept="image/*" class="input-file">
+    <p>
+      Drag an image here or click to browse
+    </p>
+  </div>
+
+  <p>
+    <label>
+      <input class="color" type="radio" name="color" value="purple" checked> Purple
+    </label>
+    <label>
+      <input class="color" type="radio" name="color" value="pink"> Pink
+    </label>
+    <label>
+      <input class="color" type="radio" name="color" value="custom"> Custom
+      <span class="color-picker hidden">
+        Light:
+        <input class="custom-color-picker" id="custom-light" type="color" value="#ffffff"> Dark:
+        <input class="custom-color-picker" id="custom-dark" type="color">
+      </span>
+    </label>
+  </p>
   <img id="source" src="test.jpg" alt="Test">
-  <canvas id="duotone"></canvas>
+
+  <div id="duotone-container">
+    <canvas id="duotone"></canvas>
+  </div>
 
   <script src="/script.js"></script>
 </body>

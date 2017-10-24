@@ -1,13 +1,32 @@
-document.addEventListener('DOMContentLoaded', function() {
-  var rgbToHsl = function(r, g, b) {
-    (r /= 255), (g /= 255), (b /= 255);
-    var max = Math.max(r, g, b),
-      min = Math.min(r, g, b);
-    var h,
-      s,
-      l = (max + min) / 2;
+(function() {
+  var throttle = function(type, name, obj) {
+    obj = obj || window;
+    var running = false;
+    var func = function() {
+      if (running) {
+        return;
+      }
+      running = true;
+      requestAnimationFrame(function() {
+        obj.dispatchEvent(new CustomEvent(name));
+        running = false;
+      });
+    };
+    obj.addEventListener(type, func);
+  };
+  throttle('resize', 'optimizedResize');
+})();
 
-    if (max == min) {
+document.addEventListener('DOMContentLoaded', function() {
+  const rgbToHsl = (r, g, b) => {
+    (r /= 255), (g /= 255), (b /= 255);
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    let h;
+    let s;
+    const l = (max + min) / 2;
+
+    if (max === min) {
       h = s = 0; // achromatic
     } else {
       var d = max - min;
@@ -89,56 +108,133 @@ document.addEventListener('DOMContentLoaded', function() {
     return pixelArray;
   }
 
-  var image = document.getElementById('source');
-  var input = document.querySelector('#file');
+  const image = document.getElementById('source');
+  const input = document.querySelector('#file');
   input.addEventListener('change', function(e) {
     var reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = e => {
       image.src = e.target.result;
     };
     reader.readAsDataURL(this.files[0]);
   });
 
-  // Get the source image
-  image.addEventListener('load', function() {
-    var canvas = document.createElement('canvas');
-    var context = canvas.getContext('2d');
+  const colors = {
+    pink: {
+      light: [225, 219, 218],
+      dark: [253, 87, 73]
+    },
+    purple: {
+      light: [255, 239, 211],
+      dark: [70, 45, 152]
+    }
+  };
 
-    // Set's the width of the canvas to be the same as the width of the image
-    canvas.width = image.width;
-    canvas.height = image.height;
+  const hexToRgb = hex => {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result
+      ? [
+          parseInt(result[1], 16),
+          parseInt(result[2], 16),
+          parseInt(result[3], 16)
+        ]
+      : null;
+  };
 
-    // Draw to the canvas the image
-    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+  const getColors = () => {
+    const checkedColor = document.querySelector('input:checked');
+    const color = checkedColor ? checkedColor.getAttribute('value') : 'purple';
+    if (color === 'custom') {
+      const dark = hexToRgb(document.querySelector('#custom-dark').value);
+      const light = hexToRgb(document.querySelector('#custom-light').value);
+      return {
+        light,
+        dark
+      };
+    } else {
+      return colors[color];
+    }
+  };
 
-    // Get the image data out by using the context of the canvas
-    var canvasData = context.getImageData(0, 0, canvas.width, canvas.height);
+  const convertColors = () => {
+    const tempCanvas = document.createElement('canvas');
+    const context = tempCanvas.getContext('2d');
+    tempCanvas.width = image.width;
+    tempCanvas.height = image.height;
+    context.drawImage(image, 0, 0, tempCanvas.width, tempCanvas.height);
+    const tempCanvasData = context.getImageData(
+      0,
+      0,
+      tempCanvas.width,
+      tempCanvas.height
+    );
+    const pixelCount = tempCanvas.width * tempCanvas.height;
 
-    // We get the number of pixels that make the image
-    var pixelCount = canvas.width * canvas.height;
+    const selectedColors = getColors();
 
-    // RED
-    var dueToneData = convertToDueTone(
-      canvasData,
+    const dueToneData = convertToDueTone(
+      tempCanvasData,
       pixelCount,
-      [240, 14, 46],
-      [25, 37, 80]
+      selectedColors.light,
+      selectedColors.dark
     );
 
-    var imageData = new ImageData(
+    const imageData = new ImageData(
       new Uint8ClampedArray(dueToneData),
-      canvas.width,
-      canvas.height
+      tempCanvas.width,
+      tempCanvas.height
     );
 
-    var target = document.querySelector('#duotone');
+    const target = document.querySelector('#duotone');
+    const targetCtx = target.getContext('2d');
     target.setAttribute(
       'style',
-      'width:' + image.width + 'px;height:' + image.height + 'px'
+      'width:' + image.width / 2 + 'px; height:' + image.height / 2 + 'px'
     );
     target.width = image.width;
     target.height = image.height;
-    var targetCtx = target.getContext('2d');
-    targetCtx.putImageData(imageData, 0, 0, 0, 0, canvas.width, canvas.height);
+    targetCtx.putImageData(
+      imageData,
+      0,
+      0,
+      0,
+      0,
+      tempCanvas.width,
+      tempCanvas.height
+    );
+
+    setScale();
+  };
+
+  image.addEventListener('load', () => {
+    convertColors();
   });
+
+  const colorPicker = document.querySelector('.color-picker');
+  const colorRadios = document.querySelectorAll('.color');
+  for (let i = 0; i < colorRadios.length; i++) {
+    colorRadios[i].addEventListener('click', event => {
+      if (event.target.value === 'custom') {
+        colorPicker.classList.remove('hidden');
+      } else {
+        colorPicker.classList.add('hidden');
+      }
+      convertColors();
+    });
+  }
+
+  const customColorPickers = document.querySelectorAll('.custom-color-picker');
+  for (let i = 0; i < customColorPickers.length; i++) {
+    customColorPickers[i].addEventListener('change', convertColors);
+  }
+
+  const setScale = () => {
+    const MAX_WIDTH = window.innerWidth - 16;
+    const container = document.querySelector('#duotone-container');
+    if (image.width > MAX_WIDTH) {
+      let scale = MAX_WIDTH / (image.width / 2);
+      container.setAttribute('style', `transform: scale(${scale})`);
+    }
+  };
+
+  window.addEventListener('optimizedResize', setScale);
 });
