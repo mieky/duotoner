@@ -118,7 +118,7 @@ const convertToDueTone = (imageData, pixelCount, color1, color2) => {
 document.addEventListener('DOMContentLoaded', () => {
   const image = document.getElementById('source');
   const input = document.querySelector('#file');
-  input.addEventListener('change', e => {
+  input.addEventListener('change', function(e) {
     const reader = new FileReader();
     reader.onload = e => {
       image.src = e.target.result;
