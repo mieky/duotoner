@@ -2,73 +2,7 @@
 
 <head>
   <title>duotoner</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      height: 100%;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    }
-
-    ol {
-      padding: 0;
-      list-style-position: inside;
-    }
-
-    label {
-      display: inline-block;
-      margin-right: 1rem;
-    }
-
-    .color-picker {
-      display: inline-block;
-      margin-left: 1rem;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    #source {
-      display: none;
-    }
-
-    .dropbox {
-      outline: 2px dashed grey;
-      outline-offset: -10px;
-      background: rgba(0, 0, 0, 0.05);
-      color: dimgray;
-      padding: 10px 10px;
-      min-height: 100px;
-      position: relative;
-      cursor: pointer;
-    }
-
-    .input-file {
-      opacity: 0;
-      width: 100%;
-      height: 100px;
-      position: absolute;
-      cursor: pointer;
-    }
-
-    .dropbox:hover {
-      background: rgba(0, 0, 0, 0.1);
-    }
-
-    .dropbox p {
-      font-size: 1.2em;
-      text-align: center;
-      padding: 10px 0;
-    }
-
-    #duotone-container {
-      transform-origin: top left;
-    }
-  </style>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
@@ -108,7 +42,7 @@
     <canvas id="duotone"></canvas>
   </div>
 
-  <script src="/script.js"></script>
+  <script src="/src/script.js"></script>
 </body>
 
 </html>
