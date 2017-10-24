@@ -50,6 +50,7 @@ const rgbToHsl = (r, g, b) => {
   return [h, s, l];
 };
 
+// Duotone algorithm from here: https://codepen.io/72lions/pen/jPzLJX
 const convertToDueTone = (imageData, pixelCount, color1, color2) => {
   const pixels = imageData.data;
   const pixelArray = [];
