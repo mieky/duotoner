@@ -4,8 +4,12 @@ const colors = {
     dark: [253, 87, 73]
   },
   purple: {
-    light: [255, 239, 211],
+    light: [255, 255, 255],
     dark: [70, 45, 152]
+  },
+  sepiasque: {
+    light: [250, 245, 246],
+    dark: [150, 125, 127]
   }
 };
 
